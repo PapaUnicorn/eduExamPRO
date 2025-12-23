@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard eduExamPRO | Edunexus Indonesia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        input[type="number"]::-webkit-inner-spin-button, 
+        input[type="number"]::-webkit-outer-spin-button { opacity: 1; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen pb-20">
+
+    <script>
+        (function() {
+            const user = JSON.parse(localStorage.getItem('userAccount'));
+            if (!user) { window.location.href = "login.html"; }
+            else if (user.privilege !== 'Admin' && !user.isPaid) { 
+                alert("Akses ditolak. Silakan selesaikan aktivasi."); 
+                window.location.href = "payment.html"; 
+            }
+        })();
+    </script>
+
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 h-16 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="h-8 w-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">eX</div>
+                <span class="text-xl font-bold text-slate-800 tracking-tight text-indigo-700">edu<span class="text-purple-600 font-black">ExamPRO</span></span>
+            </div>
+            <div class="flex items-center gap-4">
+                <span id="navUserName" class="text-xs font-bold text-slate-500 uppercase tracking-widest hidden md:block"></span>
+                <button onclick="localStorage.removeItem('userAccount'); window.location.href='index.html'" class="text-red-500 hover:text-red-700 text-xs font-bold">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-4xl mx-auto px-4 py-12">
+        <div class="mb-12">
+            <h2 class="text-3xl font-black text-slate-900 mb-2">Smart Assessment Engine</h2>
+            <p class="text-slate-500">Rancang ujian profesional dengan logika kurikulum yang presisi.</p>
+        </div>
+
+        <div class="grid grid-cols-1 gap-8">
+            
+            <div class="bg-white p-8 rounded-[32px] shadow-sm border border-slate-100 space-y-5">
+                <div class="flex items-center gap-3 text-indigo-600 font-black uppercase text-[10px] tracking-[0.2em]">
+                    <span class="bg-indigo-600 text-white w-5 h-5 flex items-center justify-center rounded-full">1</span>
+                    IDENTITAS DAN MATERI
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-bold text-slate-400 ml-1">MATA PELAJARAN</label>
+                        <input type="text" id="mapel" oninput="validateForm()" placeholder="Contoh: Biologi" class="w-full border-2 border-slate-50 bg-slate-50 p-3 rounded-xl outline-none focus:border-indigo-500 transition-all text-sm font-semibold">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-bold text-slate-400 ml-1">JENJANG KELAS</label>
+                        <select id="jenjang" onchange="validateForm()" class="w-full border-2 border-slate-50 bg-slate-50 p-3 rounded-xl outline-none focus:border-indigo-500 transition-all text-sm font-semibold">
+                            <option value="">-- Pilih Jenjang --</option>
+                            <optgroup label="Sekolah Dasar (SD)">
+                                <option value="SD Kelas 1">SD Kelas 1</option><option value="SD Kelas 2">SD Kelas 2</option><option value="SD Kelas 3">SD Kelas 3</option>
+                                <option value="SD Kelas 4">SD Kelas 4</option><option value="SD Kelas 5">SD Kelas 5</option><option value="SD Kelas 6">SD Kelas 6</option>
+                            </optgroup>
+                            <optgroup label="Sekolah Menengah Pertama (SMP)">
+                                <option value="SMP Kelas 7">SMP Kelas 7</option><option value="SMP Kelas 8">SMP Kelas 8</option><option value="SMP Kelas 9">SMP Kelas 9</option>
+                            </optgroup>
+                            <optgroup label="Sekolah Menengah Atas (SMA)">
+                                <option value="SMA Kelas 10">SMA Kelas 10</option><option value="SMA Kelas 11">SMA Kelas 11</option><option value="SMA Kelas 12">SMA Kelas 12</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-400 ml-1">KURIKULUM</label>
+                    <select id="kurikulum" onchange="validateForm()" class="w-full border-2 border-slate-50 bg-slate-50 p-3 rounded-xl outline-none focus:border-indigo-500 transition-all text-sm font-semibold">
+                        <option value="Kurikulum Merdeka">Kurikulum Merdeka</option>
+                        <option value="Kurikulum 2013">Kurikulum 2013</option>
+                        <option value="Kurikulum Berbasis Cinta">Kurikulum Berbasis Cinta</option>
+                    </select>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-400 ml-1">TOPIK MATERI</label>
+                    <textarea id="topik" oninput="validateForm()" rows="2" class="w-full border-2 border-slate-50 bg-slate-50 p-3 rounded-xl outline-none focus:border-indigo-500 transition-all text-sm" placeholder="Topik spesifik yang akan diujikan..."></textarea>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-400 ml-1">INDIKATOR SOAL</label>
+                    <textarea id="indikator" oninput="validateForm()" rows="2" class="w-full border-2 border-slate-50 bg-slate-50 p-3 rounded-xl outline-none focus:border-indigo-500 transition-all text-sm" placeholder="Contoh: Siswa mampu membedakan sel hewan dan tumbuhan..."></textarea>
+                </div>
+            </div>
+
+            <div class="bg-white p-8 rounded-[32px] shadow-sm border border-slate-100 space-y-6">
+                <div class="flex items-center gap-3 text-indigo-600 font-black uppercase text-[10px] tracking-[0.2em]">
+                    <span class="bg-indigo-600 text-white w-5 h-5 flex items-center justify-center rounded-full">2</span>
+                    LEVEL DAN KESULITAN
+                </div>
+                
+                <div>
+                    <label class="text-[10px] font-bold text-slate-400 block mb-3">TARGET LEVEL KOGNITIF (BLOOM)</label>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+                        <label class="flex items-center gap-2 p-3 bg-slate-50 rounded-xl cursor-pointer text-[11px] font-bold hover:bg-indigo-50">
+                            <input type="checkbox" name="bloom" value="C1-Mengingat" onchange="validateForm()"> C1 - Mengingat
+                        </label>
+                        <label class="flex items-center gap-2 p-3 bg-slate-50 rounded-xl cursor-pointer text-[11px] font-bold hover:bg-indigo-50">
+                            <input type="checkbox" name="bloom" value="C2-Memahami" onchange="validateForm()"> C2 - Memahami
+                        </label>
+                        <label class="flex items-center gap-2 p-3 bg-slate-50 rounded-xl cursor-pointer text-[11px] font-bold hover:bg-indigo-50">
+                            <input type="checkbox" name="bloom" value="C3-Menerapkan" onchange="validateForm()"> C3 - Menerapkan
+                        </label>
+                        <label class="flex items-center gap-2 p-3 bg-slate-50 rounded-xl cursor-pointer text-[11px] font-bold hover:bg-indigo-50">
+                            <input type="checkbox" name="bloom" value="C4-Menganalisis" onchange="validateForm()"> C4 - Menganalisis
+                        </label>
+                        <label class="flex items-center gap-2 p-3 bg-slate-50 rounded-xl cursor-pointer text-[11px] font-bold hover:bg-indigo-50">
+                            <input type="checkbox" name="bloom" value="C5-Mengevaluasi" onchange="validateForm()"> C5 - Mengevaluasi
+                        </label>
+                        <label class="flex items-center gap-2 p-3 bg-slate-50 rounded-xl cursor-pointer text-[11px] font-bold hover:bg-indigo-50">
+                            <input type="checkbox" name="bloom" value="C6-Mencipta" onchange="validateForm()"> C6 - Mencipta
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-[10px] font-bold text-slate-400 block mb-3">DISTRIBUSI TINGKAT KESULITAN</label>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-green-50 p-4 rounded-2xl border border-green-100 flex justify-between items-center">
+                            <span class="text-xs font-bold text-green-700 uppercase">Mudah</span>
+                            <input type="number" id="qty_mudah" oninput="syncTotal()" class="w-12 bg-transparent text-center font-black text-green-700 outline-none" value="0" min="0">
+                        </div>
+                        <div class="bg-amber-50 p-4 rounded-2xl border border-amber-100 flex justify-between items-center">
+                            <span class="text-xs font-bold text-amber-700 uppercase">Sedang</span>
+                            <input type="number" id="qty_sedang" oninput="syncTotal()" class="w-12 bg-transparent text-center font-black text-amber-700 outline-none" value="0" min="0">
+                        </div>
+                        <div class="bg-red-50 p-4 rounded-2xl border border-red-100 flex justify-between items-center">
+                            <span class="text-xs font-bold text-red-700 uppercase">Sukar</span>
+                            <input type="number" id="qty_sukar" oninput="syncTotal()" class="w-12 bg-transparent text-center font-black text-red-700 outline-none" value="0" min="0">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-8 rounded-[32px] shadow-sm border border-slate-100 space-y-6">
+                <div class="flex items-center gap-3 text-indigo-600 font-black uppercase text-[10px] tracking-[0.2em]">
+                    <span class="bg-indigo-600 text-white w-5 h-5 flex items-center justify-center rounded-full">3</span>
+                    FORMAT DAN VISUAL
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <label class="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl cursor-pointer border-2 border-transparent hover:border-indigo-100">
+                        <input type="checkbox" id="ai_pic" class="w-5 h-5 accent-indigo-600">
+                        <div class="flex flex-col">
+                            <span class="text-[11px] font-black uppercase">AI Picture Prompt</span>
+                            <span class="text-[9px] text-slate-400 italic">Aktifkan ilustrasi visual</span>
+                        </div>
+                    </label>
+                    <label class="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl cursor-pointer border-2 border-transparent hover:border-indigo-100">
+                        <input type="checkbox" id="ai_narr" class="w-5 h-5 accent-indigo-600">
+                        <div class="flex flex-col">
+                            <span class="text-[11px] font-black uppercase">AI Narration Prompt</span>
+                            <span class="text-[9px] text-slate-400 italic">Aktifkan teks narasi/bacaan</span>
+                        </div>
+                    </label>
+                </div>
+
+                <div class="space-y-4 pt-4 border-t border-slate-100">
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase">Jenis dan Jumlah Soal</label>
+                        <div class="text-[10px] font-black bg-indigo-100 text-indigo-600 px-3 py-1 rounded-full uppercase">
+                            Total Alokasi: <span id="current_allocation">0</span> / <span id="total_needed">0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div class="flex justify-between items-center bg-slate-50 p-3 rounded-xl">
+                            <span class="text-[11px] font-bold text-slate-600">Pilihan Ganda</span>
+                            <input type="number" id="type_pg" oninput="validateForm()" class="w-12 bg-white border border-slate-200 rounded text-center font-bold text-sm" value="0">
+                        </div>
+                        <div class="flex justify-between items-center bg-slate-50 p-3 rounded-xl">
+                            <span class="text-[11px] font-bold text-slate-600">PG Kompleks</span>
+                            <input type="number" id="type_pgk" oninput="validateForm()" class="w-12 bg-white border border-slate-200 rounded text-center font-bold text-sm" value="0">
+                        </div>
+                        <div class="flex justify-between items-center bg-slate-50 p-3 rounded-xl">
+                            <span class="text-[11px] font-bold text-slate-600">Benar / Salah</span>
+                            <input type="number" id="type_bs" oninput="validateForm()" class="w-12 bg-white border border-slate-200 rounded text-center font-bold text-sm" value="0">
+                        </div>
+                        <div class="flex justify-between items-center bg-slate-50 p-3 rounded-xl">
+                            <span class="text-[11px] font-bold text-slate-600">Menjodohkan</span>
+                            <input type="number" id="type_match" oninput="validateForm()" class="w-12 bg-white border border-slate-200 rounded text-center font-bold text-sm" value="0">
+                        </div>
+                        <div class="flex justify-between items-center bg-slate-50 p-3 rounded-xl">
+                            <span class="text-[11px] font-bold text-slate-600">Isian Singkat</span>
+                            <input type="number" id="type_short" oninput="validateForm()" class="w-12 bg-white border border-slate-200 rounded text-center font-bold text-sm" value="0">
+                        </div>
+                        <div class="flex justify-between items-center bg-slate-50 p-3 rounded-xl">
+                            <span class="text-[11px] font-bold text-slate-600">Uraian / Esai</span>
+                            <input type="number" id="type_essay" oninput="validateForm()" class="w-12 bg-white border border-slate-200 rounded text-center font-bold text-sm" value="0">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-8">
+                <button id="btnGenerate" onclick="generatePrompt()" class="hidden w-full bg-slate-900 text-white py-6 rounded-[32px] font-black text-xl uppercase tracking-widest shadow-2xl hover:bg-black transition-all transform active:scale-95">
+                    Buat Perintah Sekarang
+                </button>
+
+                <button id="btnGemini" onclick="goToGemini()" class="hidden w-full bg-gradient-to-br from-indigo-600 via-indigo-700 to-purple-700 text-white py-6 rounded-[32px] font-black text-xl uppercase tracking-widest shadow-2xl shadow-indigo-300 transform active:scale-95 transition-all flex justify-center items-center gap-4">
+                    <span class="text-2xl">✨</span> Buat Soal dengan Gemini
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <input type="hidden" id="finalPrompt">
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = JSON.parse(localStorage.getItem('userAccount'));
+            if(user) document.getElementById('navUserName').innerText = `USER: ${user.username}`;
+        });
+
+        // LOGIKA 1: Sinkronisasi Otomatis Tingkat Kesulitan & Jenis Soal
+        function syncTotal() {
+            const m = parseInt(document.getElementById('qty_mudah').value) || 0;
+            const s = parseInt(document.getElementById('qty_sedang').value) || 0;
+            const sk = parseInt(document.getElementById('qty_sukar').value) || 0;
+            const total = m + s + sk;
+            document.getElementById('total_needed').innerText = total;
+            validateForm();
+        }
+
+        function validateForm() {
+            const mapel = document.getElementById('mapel').value;
+            const jenjang = document.getElementById('jenjang').value;
+            const topik = document.getElementById('topik').value;
+            const indikator = document.getElementById('indikator').value;
+            const bloomChecked = document.querySelectorAll('input[name="bloom"]:checked').length;
+
+            // Hitung alokasi jenis soal
+            const pg = parseInt(document.getElementById('type_pg').value) || 0;
+            const pgk = parseInt(document.getElementById('type_pgk').value) || 0;
+            const bs = parseInt(document.getElementById('type_bs').value) || 0;
+            const match = parseInt(document.getElementById('type_match').value) || 0;
+            const sh = parseInt(document.getElementById('type_short').value) || 0;
+            const es = parseInt(document.getElementById('type_essay').value) || 0;
+            const currentAlloc = pg + pgk + bs + match + sh + es;
+            
+            document.getElementById('current_allocation').innerText = currentAlloc;
+            const totalNeeded = parseInt(document.getElementById('total_needed').innerText);
+
+            const btnGen = document.getElementById('btnGenerate');
+            const btnGem = document.getElementById('btnGemini');
+
+            // Validasi: Data identitas lengkap, bloom dipilih, dan jumlah alokasi pas dengan tingkat kesulitan
+            if (mapel && jenjang && topik && indikator && bloomChecked > 0 && currentAlloc === totalNeeded && totalNeeded > 0) {
+                if(btnGem.classList.contains('hidden')) btnGen.classList.remove('hidden');
+            } else {
+                btnGen.classList.add('hidden');
+            }
+        }
+
+        function generatePrompt() {
+            // Pengumpulan Data
+            const mapel = document.getElementById('mapel').value;
+            const jenjang = document.getElementById('jenjang').value;
+            const kurikulum = document.getElementById('kurikulum').value;
+            const topik = document.getElementById('topik').value;
+            const indikator = document.getElementById('indikator').value;
+            
+            const bloom = Array.from(document.querySelectorAll('input[name="bloom"]:checked')).map(el => el.value).join(", ");
+            const kesulitan = `Mudah (${document.getElementById('qty_mudah').value}), Sedang (${document.getElementById('qty_sedang').value}), Sukar (${document.getElementById('qty_sukar').value})`;
+
+            const isPic = document.getElementById('ai_pic').checked;
+            const isNarr = document.getElementById('ai_narr').checked;
+
+            // LOGIKA 6: Penentuan jumlah opsi PG berdasarkan Jenjang
+            let pgOptionsCount = jenjang.includes("SD") ? 3 : (jenjang.includes("SMP") ? 4 : 5);
+            let optionsLabel = jenjang.includes("SD") ? "a, b, c" : (jenjang.includes("SMP") ? "a, b, c, d" : "a, b, c, d, e");
+
+            let prompt = `Bertindaklah sebagai Spesialis Pengembang Kurikulum Kemendikbud sekaligus Ahli Evaluasi Pendidikan Profesional. \n`;
+            prompt += `Tugas Anda adalah menyusun Perangkat Ujian Lengkap dengan spesifikasi berikut:\n\n`;
+            
+            prompt += `=== IDENTITAS & MATERI ===\n`;
+            prompt += `• Mata Pelajaran: ${mapel}\n`;
+            prompt += `• Jenjang: ${jenjang}\n`;
+            prompt += `• Kurikulum: ${kurikulum}\n`;
+            prompt += `• Topik: ${topik}\n`;
+            prompt += `• Indikator: ${indikator}\n\n`;
+
+            prompt += `=== KONSTRUKSI SOAL ===\n`;
+            prompt += `• Level Kognitif: ${bloom}\n`;
+            prompt += `• Distribusi Kesulitan: ${kesulitan}\n`;
+            
+            if(isNarr) prompt += `• [PENTING] Aktifkan AI Narration: Buatlah teks narasi atau bacaan yang relevan dengan topik di atas sebagai stimulus soal.\n`;
+            if(isPic) prompt += `• [LOGIKA 2] Aktifkan AI Picture Prompt: Jika soal membutuhkan ilustrasi visual, buatlah sebuah prompt image generation (dalam kurung siku) di awal butir soal tersebut.\n`;
+
+            prompt += `\n=== STRUKTUR OUTPUT (WAJIB TABEL) ===\n`;
+
+            // LOGIKA 5: Pilihan Ganda
+            if(parseInt(document.getElementById('type_pg').value) > 0) {
+                prompt += `1. PILIHAN GANDA (${document.getElementById('type_pg').value} soal):\n`;
+                prompt += `   [LOGIKA 5 & 6] Buat tabel dua kolom (Nomor | Soal). Khusus jenjang ${jenjang}, buatlah ${pgOptionsCount} pilihan jawaban (${optionsLabel}).\n`;
+            }
+
+            // Pilihan Ganda Kompleks
+            if(parseInt(document.getElementById('type_pgk').value) > 0) {
+                prompt += `2. PILIHAN GANDA KOMPLEKS (${document.getElementById('type_pgk').value} soal): Tabel (Nomor | Soal & Opsi | Instruksi Jawaban Lebih dari Satu).\n`;
+            }
+
+            // LOGIKA 3: Benar / Salah
+            if(parseInt(document.getElementById('type_bs').value) > 0) {
+                prompt += `3. BENAR / SALAH (${document.getElementById('type_bs').value} soal):\n`;
+                prompt += `   [LOGIKA 3] Buat tabel tiga kolom: Kolom 1 (No), Kolom 2 ([BENAR] -- [SALAH]), Kolom 3 (Teks Pernyataan/Soal).\n`;
+            }
+
+            // LOGIKA 4: Menjodohkan
+            if(parseInt(document.getElementById('type_match').value) > 0) {
+                prompt += `4. MENJODOHKAN (${document.getElementById('type_match').value} soal):\n`;
+                prompt += `   [LOGIKA 4] Buat tabel empat kolom: Kolom 1 (No), Kolom 2 (Jawaban - biarkan kosong), Kolom 3 (Soal), Kolom 4 (Pilihan Jawaban menggunakan abjad lowercase secara berurutan).\n`;
+            }
+
+            if(parseInt(document.getElementById('type_short').value) > 0) {
+                prompt += `5. ISIAN SINGKAT (${document.getElementById('type_short').value} soal): Tabel (No | Soal | Ruang Jawaban).\n`;
+            }
+
+            if(parseInt(document.getElementById('type_essay').value) > 0) {
+                prompt += `6. URAIAN / ESAI (${document.getElementById('type_essay').value} soal): Tabel (No | Soal | Bobot Nilai).\n`;
+            }
+
+            prompt += `\nSediakan juga Tabel KISI-KISI SOAL dan Tabel KUNCI JAWABAN lengkap dengan pembahasan.\n`;
+            prompt += `Gunakan Bahasa Indonesia yang baku, inspiratif, dan menantang nalar siswa. Kerjakan sekarang.`;
+
+            document.getElementById('finalPrompt').value = prompt;
+            document.getElementById('btnGenerate').classList.add('hidden');
+            document.getElementById('btnGemini').classList.remove('hidden');
+            alert("Strategi Ujian Berhasil Dirancang! Siap dikirim ke Gemini.");
+        }
+
+        async function goToGemini() {
+            const prompt = document.getElementById('finalPrompt').value;
+            try {
+                await navigator.clipboard.writeText(prompt);
+                alert("Prompt Tersalin Otomatis! Tab Gemini akan terbuka, silakan Tempel (Paste) di sana.");
+                window.open("https://gemini.google.com", "_blank");
+            } catch (err) {
+                alert("Gagal menyalin. Silakan coba lagi.");
+            }
+        }
+    </script>
+</body>
+</html>

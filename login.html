@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8"><title>Login eduExamPRO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Inter', sans-serif; }</style>
+</head>
+<body class="bg-slate-50 min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-white p-10 rounded-3xl shadow-xl border border-indigo-50">
+        <div class="text-center mb-10">
+            <div class="h-16 w-16 bg-indigo-600 rounded-2xl flex items-center justify-center text-white font-bold text-3xl mx-auto mb-4 shadow-lg shadow-indigo-200">eX</div>
+            <h2 class="text-2xl font-bold text-slate-800">Login Member</h2>
+        </div>
+        <form onsubmit="handleLogin(event)" class="space-y-4">
+            <div>
+                <label class="text-xs font-bold text-slate-500 uppercase ml-1 mb-1 block">Username</label>
+                <input type="text" id="logUser" required class="w-full border border-slate-200 p-4 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+            </div>
+            <div>
+                <label class="text-xs font-bold text-slate-500 uppercase ml-1 mb-1 block">Password</label>
+                <input type="password" id="logPass" required class="w-full border border-slate-200 p-4 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+            </div>
+            <button type="submit" id="btn" class="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold shadow-lg hover:bg-indigo-700 transition-all mt-4">Masuk Dashboard</button>
+        </form>
+        <p class="text-center mt-6 text-sm text-slate-500">Belum punya akun? <a href="register.html" class="text-indigo-600 font-bold">Daftar Sekarang</a></p>
+    </div>
+    
+    <script>
+        async function handleLogin(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn'); btn.innerText = "Memverifikasi..."; btn.disabled = true;
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbzv4azWHXvtaX3n1fobQZr8WGzYQ_RhuP8Wda_wxavJ1uOafsKm267E3t-NPZ1E5G_j/exec';
+            
+            try {
+                const resp = await fetch(scriptURL);
+                const users = await resp.json();
+                const match = users.find(u => u.username === document.getElementById('logUser').value && u.pass === document.getElementById('logPass').value);
+                
+                if (match) {
+                    // Update Local Storage dengan data dari Database
+                    localStorage.setItem('userAccount', JSON.stringify({
+                        ...match, 
+                        isPaid: match.status === 'Active'
+                    }));
+                    
+                    if(match.privilege === 'Admin') {
+                        window.location.href = "admin.html";
+                    } else {
+                        window.location.href = (match.status === 'Active') ? "eduexam.html" : "payment.html";
+                    }
+                } else { alert("Maaf, Username atau Password salah."); btn.innerText = "Masuk Dashboard"; btn.disabled = false; }
+            } catch (e) { alert("Gagal terhubung ke database."); btn.innerText = "Masuk Dashboard"; btn.disabled = false; }
+        }
+    </script>
+</body>
+</html>
